@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>龙族·角色性格测试 — 卡塞尔之门</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&display=swap');
+
+  :root {
+    --sakura: #f2a7ba; --sakura-dark: #c97a8e;
+    --night: #14141e; --night-card: #1c1c2e;
+    --gold: #c9a24e; --gold-bright: #f2d48a;
+    --crimson: #b71c34; --crimson-dark: #781122;
+    --paper: #f7f0e3; --paper-dark: #ede0cc;
+    --text: #2c1810; --text-light: #6b5644;
+    --card-bg: rgba(252,248,240,0.95);
+    --shadow: 0 4px 28px rgba(0,0,0,0.15);
+    --radius: 18px; --radius-sm: 12px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+
+  body {
+    font-family: 'Noto Serif SC','Source Han Serif SC','STSong','SimSun',serif;
+    background: var(--night); color: var(--text);
+    min-height: 100vh; display: flex; justify-content: center;
+    align-items: center; overflow-x: hidden; position: relative;
+  }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -5%, rgba(242,167,186,0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 35% at 25% 75%, rgba(201,162,78,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 45% 25% at 75% 25%, rgba(183,28,52,0.05) 0%, transparent 70%);
+    pointer-events:none; z-index:0;
+  }
+
+  .petals{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .petal{position:absolute;width:10px;height:10px;background:radial-gradient(circle at 30% 30%,var(--sakura),var(--sakura-dark));border-radius:50% 0 50% 50%;opacity:0;animation:petalFall linear infinite}
+  @keyframes petalFall{
+    0%{transform:translateY(-10vh) rotate(0deg) translateX(0);opacity:0}
+    8%{opacity:.65} 92%{opacity:.35}
+    100%{transform:translateY(110vh) rotate(720deg) translateX(90px);opacity:0}
+  }
+
+  .container{position:relative;z-index:1;width:100%;max-width:460px;min-height:100vh;padding:12px;display:flex;flex-direction:column;justify-content:center}
+  .screen{display:none;animation:fadeIn .5s ease}
+  .screen.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+  .card{background:var(--card-bg);border-radius:var(--radius);padding:26px 22px;box-shadow:var(--shadow);border:1px solid rgba(201,162,78,.18);position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:75%;height:3px;background:linear-gradient(90deg,var(--sakura),var(--gold),var(--crimson),var(--gold),var(--sakura));border-radius:0 0 3px 3px}
+
+  .start-emblem{text-align:center;margin-bottom:18px}
+  .start-emblem .logo-img{width:80px;height:80px;object-fit:contain;animation:floatEmblem 3s ease-in-out infinite;filter:drop-shadow(0 4px 12px rgba(242,167,186,.35))}
+  .start-emblem .logo-fallback{font-size:72px;animation:floatEmblem 3s ease-in-out infinite;filter:drop-shadow(0 4px 12px rgba(242,167,186,.35));display:none}
+  @keyframes floatEmblem{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+  .title-main{font-size:30px;font-weight:900;text-align:center;color:var(--night);margin-bottom:6px;letter-spacing:2px}
+  .title-main .dot{color:var(--crimson)}
+  .title-sub{font-size:13px;text-align:center;color:var(--text-light);margin-bottom:22px;line-height:1.7;letter-spacing:.5px}
+  .title-sub em{font-style:normal;color:var(--gold);background:rgba(201,162,78,.1);padding:2px 8px;border-radius:4px;font-weight:700}
+
+  .btn{display:block;width:100%;padding:14px;font-size:16px;font-family:inherit;font-weight:700;border:none;border-radius:12px;cursor:pointer;transition:all .25s;letter-spacing:1px}
+  .btn-primary{background:linear-gradient(135deg,#b71c34,#8b1528);color:#fff;box-shadow:0 4px 16px rgba(183,28,52,.35)}
+  .btn-primary:active{transform:scale(.97);opacity:.9}
+  .btn-secondary{background:transparent;color:var(--crimson);border:2px solid var(--crimson);margin-top:10px}
+  .btn-secondary:active{background:rgba(183,28,52,.06)}
+
+  .progress-wrap{margin-bottom:18px}
+  .progress-text{display:flex;justify-content:space-between;font-size:11px;color:var(--text-light);margin-bottom:6px;letter-spacing:.5px}
+  .progress-bar{height:5px;background:rgba(201,162,78,.18);border-radius:3px;overflow:hidden}
+  .progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--sakura),var(--gold-bright),var(--crimson));transition:width .45s ease}
+
+  .q-num{font-size:11px;color:var(--sakura-dark);font-weight:700;letter-spacing:2px;margin-bottom:8px}
+  .q-text{font-size:17px;font-weight:700;color:var(--night);line-height:1.6;margin-bottom:18px}
+
+  .options{display:flex;flex-direction:column;gap:9px}
+  .option{display:flex;align-items:flex-start;gap:10px;padding:13px 14px;background:var(--paper);border:1.5px solid transparent;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;font-size:14px;line-height:1.55;text-align:left;font-family:inherit;color:var(--text)}
+  .option:active{background:#fce4ec;border-color:var(--sakura-dark)}
+  .option.selected{border-color:var(--gold);background:rgba(201,162,78,.07);box-shadow:inset 0 0 0 1px rgba(201,162,78,.12)}
+  .option-letter{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#1c1c2e,#2e2e48);color:var(--gold-bright);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+  .option.selected .option-letter{background:linear-gradient(135deg,var(--crimson),var(--crimson-dark));color:#fff}
+  .option-text{flex:1;padding-top:3px}
+
+  .btn-wrap{display:flex;gap:10px;margin-top:18px}
+  .btn-wrap .btn{flex:1}
+
+  .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--night);color:var(--gold-bright);padding:10px 24px;border-radius:24px;font-size:13px;font-family:inherit;z-index:100;opacity:0;transition:opacity .3s;pointer-events:none}
+  .toast.show{opacity:1}
+
+  /* ── Result ── */
+  .result-header{text-align:center;margin-bottom:14px}
+  .result-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:3px;color:var(--crimson);background:rgba(183,28,52,.07);padding:5px 18px;border-radius:20px;margin-bottom:10px}
+  .result-name{font-size:34px;font-weight:900;color:var(--night);text-align:center;margin-bottom:4px}
+
+  .character-card{background:linear-gradient(165deg,#14141e 0%,#1e1e38 35%,#14141e 100%);border-radius:var(--radius);overflow:hidden;box-shadow:0 8px 36px rgba(0,0,0,.25);margin-bottom:20px;border:1px solid rgba(201,162,78,.13);position:relative}
+
+  /* ── Gallery ── */
+  .gallery-wrap{position:relative;width:100%;aspect-ratio:16/18;overflow:hidden;background:radial-gradient(circle at 50% 30%,rgba(242,167,186,.12) 0%,transparent 55%),radial-gradient(ellipse 60% 40% at 50% 80%,rgba(201,162,78,.08) 0%,transparent 60%)}
+  .gallery-track{display:flex;width:100%;height:100%;transition:transform .4s cubic-bezier(.25,.8,.25,1)}
+  .gallery-slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative}
+  .gallery-img{width:100%;height:100%;object-fit:contain;animation:floatEmblem 4.5s ease-in-out infinite}
+  .gallery-fallback{font-size:96px;display:none;animation:floatEmblem 4.5s ease-in-out infinite;filter:drop-shadow(0 4px 20px rgba(242,167,186,.4))}
+  .gallery-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:36px;height:36px;border-radius:50%;background:rgba(20,20,30,.65);border:1px solid rgba(242,167,186,.25);color:var(--gold-bright);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;backdrop-filter:blur(4px)}
+  .gallery-arrow:active{background:rgba(183,28,52,.5);border-color:var(--crimson)}
+  .gallery-arrow.prev{left:8px}
+  .gallery-arrow.next{right:8px}
+  .gallery-dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5}
+  .gallery-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.15);transition:all .3s;cursor:pointer}
+  .gallery-dot.active{background:var(--gold-bright);border-color:var(--gold);box-shadow:0 0 6px rgba(242,212,138,.5)}
+  .gallery-counter{position:absolute;top:10px;right:12px;z-index:5;font-size:11px;color:rgba(255,255,255,.55);background:rgba(20,20,30,.5);padding:3px 10px;border-radius:10px;backdrop-filter:blur(4px);letter-spacing:1px}
+
+  .character-card-body{padding:20px 22px 24px;background:var(--card-bg)}
+  .char-title{font-size:12px;color:var(--gold);font-weight:700;letter-spacing:3px;margin-bottom:4px}
+  .char-name{font-size:24px;font-weight:900;color:var(--night);margin-bottom:3px}
+  .char-alias{font-size:13px;color:var(--text-light);margin-bottom:14px}
+
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+  .stat-item{background:var(--paper);border-radius:10px;padding:9px 10px;text-align:center}
+  .stat-label{font-size:10px;color:var(--text-light);margin-bottom:1px;letter-spacing:1px}
+  .stat-value{font-size:18px;font-weight:900;color:var(--night)}
+  .stat-value.s{color:var(--gold)} .stat-value.a{color:var(--crimson)}
+  .stat-value.b{color:var(--sakura-dark)} .stat-value.c{color:var(--text-light)}
+
+  .tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+  .tag{font-size:11px;padding:3px 12px;border-radius:20px;background:rgba(242,167,186,.10);color:var(--sakura-dark);border:1px solid rgba(242,167,186,.22);font-weight:700}
+  .desc{font-size:13px;line-height:1.9;color:var(--text);margin-bottom:14px}
+  .quote-block{font-size:13px;font-style:italic;color:var(--crimson);padding:12px 15px;background:rgba(183,28,52,.03);border-left:3px solid var(--crimson);border-radius:0 8px 8px 0;margin-bottom:14px;line-height:1.7}
+
+  /* ── Nidhogg ── */
+  .nidhogg-warn{text-align:center;margin-bottom:12px}
+  .nidhogg-warn .glitch-text{font-size:22px;font-weight:900;color:#1a1a1a;letter-spacing:8px;margin-bottom:6px;animation:glitch .3s infinite}
+  .nidhogg-warn .sub-warn{font-size:12px;color:#888;line-height:1.7}
+  .nidhogg-warn .sub-warn strong{color:#c41e3a}
+  @keyframes glitch{0%,100%{transform:translateX(0)}20%{transform:translateX(-3px)}40%{transform:translateX(3px)}60%{transform:translateX(-2px)}80%{transform:translateX(2px)}}
+  .nidhogg-card{background:linear-gradient(165deg,#0a0a0a 0%,#1a0a0a 40%,#0a0a0a 100%);border:1px solid rgba(139,0,0,.4);box-shadow:0 0 40px rgba(139,0,0,.25),inset 0 0 80px rgba(139,0,0,.06)}
+  .nidhogg-card .gallery-wrap{background:radial-gradient(circle at 50% 30%,rgba(139,0,0,.2) 0%,transparent 50%)}
+
+  @media(min-width:460px){
+    .container{padding:20px} .card{padding:30px 26px}
+    .title-main{font-size:34px} .q-text{font-size:18px}
+    .option{font-size:15px} .character-card-body{padding:22px 26px 28px}
+  }
+</style>
+</head>
+<body>
+<div class="petals" id="petals"></div>
+<div class="toast" id="toast">请先选择你的答案</div>
+
+<div class="container">
+
+  <!-- ═══ START ═══ -->
+  <div class="screen active" id="screen-start">
+    <div class="card">
+      <div class="start-emblem">
+        <img class="logo-img" src="https://patchwiki.biligame.com/resources/assets/images/logo/logo_lzkp.png" alt="logo" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <div class="logo-fallback">🐉</div>
+      </div>
+      <h1 class="title-main">龙族<span class="dot">·</span>角色性格测试</h1>
+      <p class="title-sub">二十道灵魂拷问，照见你深处的<em>龙族血统</em><br>卡塞尔学院的大门已为你敞开——<br>你的言灵在低语，你的黄金瞳在燃烧。</p>
+      <button class="btn btn-primary" onclick="startQuiz()">⚡ 唤 醒 血 脉</button>
+    </div>
+  </div>
+
+  <!-- ═══ QUIZ ═══ -->
+  <div class="screen" id="screen-quiz">
+    <div class="card">
+      <div class="progress-wrap">
+        <div class="progress-text"><span id="progress-label">第 1 / 20 问</span><span id="progress-percent">5%</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:5%"></div></div>
+      </div>
+      <div class="q-num" id="q-num">QUESTION 01</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="btn-wrap">
+        <button class="btn btn-secondary" id="btn-prev" onclick="goPrev()" style="display:none">← 上一问</button>
+        <button class="btn btn-primary" id="btn-next" onclick="goNext()">下一问 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ RESULT ═══ -->
+  <div class="screen" id="screen-result"><div id="result-content"></div></div>
+</div>
+
+<script>
+// PETALS
+(function(){const c=document.getElementById('petals');for(let i=0;i<28;i++){const p=document.createElement('div');p.classList.add('petal');const s=7+Math.random()*12;p.style.cssText=`left:${Math.random()*100}%;width:${s}px;height:${s}px;animation-duration:${5+Math.random()*11}s;animation-delay:${Math.random()*12}s`;c.appendChild(p)}})();
+
+// ═══════════════════════════════════════════
+//  CHARACTER DATA — gallery (multiple images per character)
+// ═══════════════════════════════════════════
+const W = 'https://patchwiki.biligame.com/images/lzkp';
+const characters = {
+  lumf: {
+    id:'lumf', name:'路明非', alias:'Lu Mingfei · S级废柴', title:'THE LOST PRINCE',
+    stats:{strength:'C',speed:'C',spirit:'S',charm:'B'},
+    tags:['废柴逆袭','温柔到骨子里','自我牺牲','吐槽役'],
+    gallery:[
+      `${W}/b/b6/i3j97m9emrf87rmrwuqosgou1kuhs4g.png`,
+      `${W}/6/63/3d2dv1xrbo9hmodqruw5aiq1p42hsdq.png`
+    ],
+    fallback:'🎮',
+    desc:'雨夜的十字路口，一个衰小孩撑着一把破伞，伞骨断了三根，他却浑然不觉——因为他正对着手机那头的女孩说"我没事"。你就是那样的人。明明最害怕孤独，却总在假装一个人也可以。你不知道自己有多强，正如你不知道那个一直在保护你的小魔鬼，究竟付出了什么代价。',
+    quote:'「每个人心里都有一个死小孩，在黑暗里独自哭泣。只是有的人听见了，有的人假装没听见。」'
+  },
+  chuzh: {
+    id:'chuzh', name:'楚子航', alias:'Chu Zihang · 狮心会会长', title:'THE LIONHEART',
+    stats:{strength:'S',speed:'A',spirit:'A',charm:'A'},
+    tags:['纪律即信仰','外冷内炽','一言不发地守护','绝对执行'],
+    gallery:[
+      `${W}/f/f8/mqs5zybvi6od1o5vr0afvjzqs2kklby.png`,
+      `${W}/a/ab/nay5m10p5kpdp8xnghwbi45x2q36amp.png`
+    ],
+    fallback:'⚔️',
+    desc:'暴雨倾盆的夜晚，一个人站在高架桥下，雨水顺着刀锋滑落。他不说一句话，但所有人都知道——只要他在，就没有人能越界。你的沉默不是冷漠，而是把所有的温度都藏在了行动里。你相信这世界上有对错，有必须做的事，有即便是死也不能退让的底线。',
+    quote:'「我不会让任何人死在我面前。这不是承诺，这是我的道。」'
+  },
+  caesar: {
+    id:'caesar', name:'凯撒·加图索', alias:'Caesar Gattuso · 学生会主席', title:'THE GOLDEN LION',
+    stats:{strength:'A',speed:'A',spirit:'A',charm:'S'},
+    tags:['天生王者','骄阳般的自信','浪漫至死不渝','贵族义务'],
+    gallery:[
+      'https://p1.ssl.qhmsg.com/dr/270_500_/t010a7d811926643197.jpg',
+    ],
+    fallback:'👑',
+    desc:'阳光穿过彩绘玻璃窗落在他的金发上，他转过身来，嘴角带着笃定的笑意。你生来就不属于平庸。你相信荣耀不是别人给的，是自己赢来的。你从不掩饰自己的光芒，也从不屑于用卑劣的手段取胜。像一个中世纪的骑士，你策马冲进战场，铠甲在阳光下闪闪发光。',
+    quote:'「我生来就是焦点。这不是傲慢，这是事实。」'
+  },
+  nono: {
+    id:'nono', name:'诺诺 / 陈墨瞳', alias:'Nono · 红发巫女', title:'THE SCARLET WITCH',
+    stats:{strength:'B',speed:'A',spirit:'S',charm:'S'},
+    tags:['无法捉摸','毒舌是温柔的面具','自由即生命','侧写一切谎言'],
+    gallery:[
+      `${W}/3/31/fc8a9znucey259fuj7gn8ywrjjiin2w.png`,
+      `${W}/c/cb/lj0g2j0078z2e3f7wtun419y2yt9q4q.png`
+    ],
+    fallback:'🌹',
+    desc:'她穿着红色的裙子穿过人群，所有人都回头看她，但她谁也没看。你就是那样的人——你的心思像一本用密码写成的书，没人能轻易读懂。你把温柔藏得很深，深到连自己有时都找不到。但当你真正在意一个人，你会跨过世界的边缘去救他。',
+    quote:'「我叫陈墨瞳。墨水的墨，瞳孔的瞳。记住了——因为我不会说第二遍。」'
+  },
+  xiami: {
+    id:'xiami', name:'夏弥', alias:'Xia Mi · 大地与山之王', title:'THE JÖRMUNGANDR',
+    stats:{strength:'S',speed:'S',spirit:'S',charm:'A'},
+    tags:['笑容是最深的伪装','千年孤独','宿命之重','爱与毁灭同源'],
+    gallery:[
+      'https://media.9game.cn/gamebase/ieu-gdc-pre-process/images/20240912/14/14/39acca1973247fd6e72c2d918a005903.jpg',
+    ],
+    fallback:'🐍',
+    desc:'她笑得像夏天里第一口冰西瓜，甜得让人忘记所有的防备。但如果你仔细看她的眼睛，会看见里面倒映着千万年的星河——那是一个古老得无法计算年岁的灵魂，借着一个少女的躯壳，偷偷尝一口人间的温暖。你也一样，把自己真正的重量藏在了轻快的笑容背后。',
+    quote:'「我叫夏弥。夏天的夏，弥天的弥——弥天大谎的弥。」'
+  },
+  erii: {
+    id:'erii', name:'上杉绘梨衣', alias:'Erii · 月读命', title:'THE SILENT PRINCESS',
+    stats:{strength:'S',speed:'B',spirit:'A',charm:'S'},
+    tags:['不染尘埃','温柔即是力量','渴望做一个普通女孩','世界以痛吻我'],
+    gallery:[
+      `${W}/e/e8/qppbpehm5oke2mxfns8w0pabl4lenkl.png`,
+      `${W}/7/78/ou7c9fwk1944ngofsun5zgro1mmks0p.png`
+    ],
+    fallback:'🦋',
+    desc:'她用记号笔在速写本上写字，一笔一划，认真得像第一次握笔的孩子。她想去看外面的世界——去看海、去看烟花、去看所有她从未拥有过的"普通的幸福"。你和她一样，心里藏着最柔软的角落，不管经历过什么，依然选择用善意去触碰这个世界。',
+    quote:'「Sakura......Sakura......Sakura......」——那是她唯一会说的名字，也是她留给世界的最后一句诗。'
+  },
+  zero: {
+    id:'zero', name:'零 / 雷娜塔', alias:'Zero · 冰之女王', title:'THE FROZEN QUEEN',
+    stats:{strength:'A',speed:'S',spirit:'A',charm:'A'},
+    tags:['极致理性','不轻易交付信任','一旦认定至死不渝','行动胜于千言'],
+    gallery:[
+      `${W}/a/af/1dbvie0m13v6tf0rrc3lr7haiy5tdxd.png`,
+      `${W}/8/85/tjz6x0bz1bx9kbrksgusg2yei4g6ibz.png`
+    ],
+    fallback:'❄️',
+    desc:'莫斯科的雪落在她的睫毛上，她一动不动地站在零下三十度的风中。不解释、不抱怨、不示弱。你不是冷漠，你只是太清楚承诺的重量。你从不多说，但当你答应了一件事，即便是世界的尽头你也会走到。那些真正懂你的人，不需要你的解释，就已经知道了。',
+    quote:'「不彼此抛弃，不彼此出卖。直到死亡的尽头——这是我唯一的约定。」'
+  },
+  fingal: {
+    id:'fingal', name:'芬格尔', alias:'Fingal · 新闻部部长 · F级留级生', title:'THE ETERNAL SENIOR',
+    stats:{strength:'C',speed:'D',spirit:'A',charm:'B'},
+    tags:['大智若愚','美食即正义','永远在留级','深藏不露的传奇'],
+    gallery:[
+      `${W}/b/b7/4cnhpq78hyk2lrmb7t9sckwblr1u1qb.png`,
+      `${W}/7/76/3pjdotzl49j4voug11997ecyjvo0i82.png`
+    ],
+    fallback:'🍗',
+    desc:'他叼着鸡腿，穿着人字拖，永远拖欠着毕业论文字数。可如果你调出封存已久的档案，会看见格陵兰冰盖上一个少年孤身站在沉没的黑影前——他曾经是卡塞尔最耀眼的天才，只是后来选择把自己活成了一个笑话。你就是那种人：用最不正经的方式，守护着最正经的东西。',
+    quote:'「不要小看任何一个留级生。他只是不想毕业而已——这所学院需要他。」'
+  },
+  nidhogg: {
+    id:'nidhogg', name:'尼德霍格', alias:'Nidhogg · 绝望 · 黑龙 · 世界终结者', title:'THE WORLD ENDER',
+    stats:{strength:'S',speed:'S',spirit:'S',charm:'—'},
+    tags:['■■■','■■■','■■■','■■■'],
+    gallery:[
+      'https://ts4.tc.mm.bing.net/th/id/OIP-C.MvflPOGe31BxzdzByar7wQHaEJ?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
+    ], fallback:'🖤',
+    desc:'你不属于任何一个已知的角色。你的每一次选择都指向同一个方向——那条最孤独、最决绝、最不被人理解的路。在龙族的编年史中，有一个名字被反复抹去又反复浮现：<strong>尼德霍格</strong>——啃噬世界树根须的黑龙，诸神黄昏的起点与终点。你不是英雄，也不是反派。你是那个在一切都结束之后，独自飞过燃烧的天空的存在。你不寻求理解，因为理解本身就配不上你。',
+    quote:'「They say I gnaw at the roots of the world. No. I am the root. I am the world. And I am hungry.」'
+  }
+};
+
+// ═══════════════════════════════════════════
+//  QUESTIONS — 江南文风，人格映射已校准
+// ═══════════════════════════════════════════
+const Q = [
+  {q:'周五晚上的宿舍楼，灯一盏一盏地灭了。走廊尽头有个人在小声打电话，空气里飘着泡面的味道。你在哪里？',opts:[
+    {t:'窝在被子里，手机屏幕的光映在脸上，在某个游戏里跑着这辈子可能永远跑不完的地图。',s:{lumf:3,fingal:2}},
+    {t:'训练馆的灯还亮着。你知道这个时间没有人会来——所以你来了。刀劈在靶子上的声音，规律得像心跳。',s:{chuzh:3,zero:2}},
+    {t:'校外的某个露台，晚风裹着城市的灯光吹过来。你端着酒杯靠在栏杆上，享受所有人目光无形中朝你聚拢的感觉。',s:{caesar:3,nono:1}},
+    {t:'一个人走在操场上，耳机里放着没有人声的后摇。你数着跑道上的白线，一步，两步，世界安静得像沉进了海底。',s:{xiami:2,erii:2,nono:1}}
+  ]},{q:'阴天，雨还没下。你站在教学楼的走廊里，看见远处操场上有人被一群人围住了。那一刻你心里最先闪过的是什么？',opts:[
+    {t:'手心里已经全是汗。你知道自己不是英雄的料——但脚已经先于脑子迈出去了。哪怕两条腿都在抖。',s:{lumf:3,erii:1}},
+    {t:'你数了数对方的人头，估算了最近的安全出口、监控盲区和可用的武器——然后才把袖子卷起来。',s:{chuzh:3,zero:2}},
+    {t:'走过去。不需要跑。你的脚步声就足够让那些人回头——然后他们会自动让出一条路。这是气场，不是威胁。',s:{caesar:3,xiami:1}},
+    {t:'假装什么都没看见，转身拐进旁边的便利店。但你买的那罐可乐并不是给自己喝的——你把它放在操场边的长椅上，然后拨通了保卫处的电话。',s:{fingal:3,nono:2}}
+  ]},{q:'团队里有人搞砸了。不是你的错，但问责会议的气氛像结了冰。会议室里所有人都在沉默。你开口说了什么？',opts:[
+    {t:'"那个……其实我也有做得不好的地方。"你看见角落里那个快哭出来的队友投来了感激的目光。你把不属于你的锅扛在了肩上。',s:{lumf:2,zero:2,erii:1}},
+    {t:'把一个U盘推到桌子中央。"我在昨晚复盘的时候做了A、B两套补救方案。从现在开始，按B方案走，三天能追回来。"会议室的冰化了。',s:{chuzh:2,zero:3}},
+    {t:'"失败是成功他妈。我在加图索家学到的第一课：不是不犯错，而是犯了错还敢站在这里接着干。来，重新分工。"你不需要任何人承担责任，你只需要他们重新燃起来。',s:{caesar:3,nono:1}},
+    {t:'你先讲了个笑话把气氛松下来，然后从身后拿出一个大披萨。"先吃东西，天塌下来有高个子顶着——顺带一提，我已经找到了背锅的最佳人选。"',s:{fingal:3,xiami:1}}
+  ]},{q:'深夜回到宿舍，室友已经睡着了。你打开台灯，暖黄的光圈刚好罩住桌面。这时候你最可能拿起的东西是？',opts:[
+    {t:'游戏手柄。你戴上耳机，屏幕上的角色在黑暗中奔跑。好像在跑着跑着，白天的烦恼就会散落在像素构成的废墟里。',s:{lumf:3,fingal:2}},
+    {t:'你从抽屉里拿出一本手写的笔记——精确到每天的训练数据、体能曲线、技能熟练度变化。你翻到最新的空白页，开始写今天的复盘。',s:{chuzh:3,zero:2}},
+    {t:'手机。你快速划过三十几条未读消息——几条是邀约，几条是问候，几条是"今天看到你了"。你嘴角微微上扬，挑了最顺眼的那条回复了一个表情。没打任何字。',s:{caesar:2,nono:2}},
+    {t:'什么都不拿。你关了台灯，在黑暗里睁着眼睛。天花板上有一道裂缝，你盯着那条裂缝看了很久——它像一道没有尽头的河流。',s:{xiami:3,erii:2,zero:1}}
+  ]},{q:'一个你认识但不熟的人，在众目睽睽之下被羞辱了。没人站出来。你站在人群外围。你会？',opts:[
+    {t:'就在你犹豫的几秒钟里，你感觉自己的脸在发烫。其实你根本不认识那个人——可是你太清楚"一个人站在人群中被嘲笑"是什么滋味了。你推开前面的人走了出去。',s:{lumf:3,erii:2}},
+    {t:'不动声色地拨开人群，站到那个人和施暴者之间。你没说话——你的存在本身就已经宣告了一切。然后你转头，轻声对那个人说："走吧。"',s:{chuzh:3,zero:1}},
+    {t:'你优雅地插了一句嘴。只有一句话，语气平淡得好像在谈论天气。但这句话精准得让施暴者脸上的笑容凝固了——整条走廊安静了三秒钟。',s:{caesar:2,nono:3}},
+    {t:'你没有当场站出来。但你花了整个晚上，用自己的方式让那个施暴者付出了代价——可能是匿名举报，可能是精准流出的信息，也可能是第二天早上全校都在传的某个"巧合"。',s:{zero:2,fingal:2,nono:2}}
+  ]},{q:'你爱上了一个人。哪种描述最靠近你的心跳？',opts:[
+    {t:'你从来没说过。你只是每天绕远路经过她常去的那个窗口，在她可能出现的每一个拐角慢下脚步。你对自己说：这样就够了。',s:{lumf:3,zero:2}},
+    {t:'当你说出那句话的时候，你希望整座城市都能听见。你不在乎谁会因此嫉妒、谁会觉得你太张扬。爱就是要让全世界知道——这是你对待一切珍贵事物的方式。',s:{caesar:3,nono:1}},
+    {t:'你觉得爱是一个古老的谜语。你猜过，或许也误以为自己找到了答案，但直到它从你指缝间流走的那一刻，你才突然认出它的模样。',s:{xiami:3,nono:2}},
+    {t:'你给她写了一封信。不是情书——是食堂今天的菜谱、图书馆新换的咖啡机、天气预报说明天可能有雨。你是用心率在写每一个字的，只是没有人能从字面上看出来。',s:{erii:2,zero:2,chuzh:1}}
+  ]},{q:'如果要在卡塞尔学院加入一个社团，你会走进哪扇门？',opts:[
+    {t:'某个没人知道的地下社团。只有三个成员，每周在旧图书馆的地下室里碰面，研究一些没人关心的古老文献——但你在这里找到了归属感。',s:{lumf:2,erii:2,fingal:1}},
+    {t:'狮心会。你第一次推开门的时候，所有人都停下了手里的动作看你。但你径直走到最里面的训练台，开始沉默地练刀。一周后，没有人再用审视的眼光看你了。',s:{chuzh:3,zero:2}},
+    {t:'学生会。你走进去的时候，里面正在开派对——音乐、灯光、笑闹的人群。但所有人都在你进门的那一刻回头了。你不是来参加派对的，你是来主持它的。',s:{caesar:3,nono:1}},
+    {t:'新闻部。一个永远缺稿、永远缺人、永远处于"即将倒闭"状态的神奇部门。但你在这里找到了全学院最好喝的咖啡、最离谱的八卦，和一个留级多年的部长。',s:{fingal:3,lumf:1}}
+  ]},{q:'你在图书馆发现了一本封面上没有任何文字的书，书页泛黄，有一页被折了角。你……',opts:[
+    {t:'小心翼翼地把它放回原来的位置。但你记住了那个书架编号、那层、那本。几天后你在网上找到了它的电子版，偷偷读完了——然后失眠了好几个晚上。',s:{lumf:2,erii:2,zero:1}},
+    {t:'用笔把那一页的每一个字抄在了自己的笔记本上。然后花了一个月的时间，查了图书馆里所有和那段文字有关联的古籍——有些甚至不是这个语系的。',s:{chuzh:2,zero:3}},
+    {t:'合上书，让它保持原样。但走出图书馆的时候，你笑了。因为你知道那本书上写的东西——你的家族档案里早就有了。',s:{caesar:2,xiami:1,nono:1}},
+    {t:'直接把书借走了。管理员说这本书从来没有借阅记录。你把书带回宿舍，用灯照着读了整夜——天亮的时候，你发现自己不知道什么时候在空白处写满了批注。',s:{xiami:3,nono:2}}
+  ]},{q:'你人生中最后悔的一件事，和哪个词最相关？',opts:[
+    {t:'"没有说"。有一个瞬间，你只要张嘴就好了——三个字或者五个字，你就可以改变一切。但你沉默了。从此那个瞬间被你反复回放，像一个坏掉的录像带。',s:{lumf:3,erii:2,zero:1}},
+    {t:'"来不及"。你动作已经够快了，但还不够快。从那以后你对自己说：我决不允许自己再慢半拍。',s:{chuzh:3,zero:1}},
+    {t:'"失态"。你曾在某个不该失控的场合失控了。就那么一次。你至今不能原谅自己——不是因为你做错了什么，而是因为你在那个瞬间暴露了你其实也是个普通人的事实。',s:{caesar:2,nono:2,xiami:1}},
+    {t:'"如果"。如果当时你选了另一条路，如果当时你没有把自己真正的身份藏起来，如果当时你可以不演那个别人期望你扮演的角色——你的一生都在和各种"如果"打架。',s:{xiami:3,fingal:2}}
+  ]},{q:'暴雨天。你的室友心情跌到了谷底，坐在床边一言不发已经两个小时了。你的行动是？',opts:[
+    {t:'你没说什么安慰的话——因为你每次试图安慰别人的时候都会把话说得很笨。但你下楼淋着雨买了两人份的炸鸡回来，默默放在他旁边。然后你打开游戏机，把第二个手柄递过去。',s:{lumf:3,erii:1}},
+    {t:'你没说话。只是把一杯泡好的热茶放在他手边。然后你拉过一把椅子，坐在他斜后方的位子上，开始做自己的事。你不看他——但你知道，如果他开口，你会听。如果他需要你，你已经在。',s:{chuzh:2,zero:3}},
+    {t:'你坐在他旁边，开始讲你最近遇到的一件很蠢很好笑的事。你先把自己逗笑了，然后他也笑了——虽然眼角好像还湿着。有时候，把一个人的痛苦变成可以一起嘲笑的东西，就是最好的安慰。',s:{fingal:3,caesar:1}},
+    {t:'你把他从床上拽起来，拉到门口。雨还在下。"跑。"你说。你们在雨里狂奔了二十分钟，全身湿透，最后两个人在天桥底下大口喘气，笑得像两个疯子。',s:{caesar:1,nono:2,xiami:2}}
+  ]},{q:'你做了一个梦。梦里你站在很高很高的地方，脚下是整座城市的灯火。风吹过来的时候——',opts:[
+    {t:'你感觉到一种奇怪的失落——好像有什么重要的东西被留在了很远的地方。你回头看了一眼，但身后什么都没有。你醒过来的时候，枕头是湿的。',s:{lumf:3,erii:2}},
+    {t:'你没有往下看。你抬起头，看着夜空——在那里，你看见了另一双燃烧着金色火焰的眼睛，正回望着你。你没有后退。你的瞳孔也在发光。',s:{chuzh:3,zero:2}},
+    {t:'你张开双臂。风穿过你的头发，你感觉自己像一面旗帜。城市是你的，风是你的，脚下所有的光与喧嚣都是你的。你在梦里笑了起来。',s:{caesar:3,xiami:1}},
+    {t:'你知道自己在做梦。你没有急着醒来——因为你很清楚，只有在这个世界里，你才不用假装自己是一个"正常"的人。你站在高处，看着脚下的城市，轻声说了一句："好久不见。"',s:{xiami:3,nono:2,zero:1}}
+  ]},{q:'如果神允许你抹去你生命中某一天的痛苦回忆，你会——',opts:[
+    {t:'犹豫了很久，最后说"不"。那个回忆确实很痛——但如果你抹掉了它，那个教会你坚强的人也会跟着一起被抹掉。你宁愿痛着记住，也不愿意无知地遗忘。',s:{lumf:2,erii:3,chuzh:1}},
+    {t:'"不需要。"你的回答快得连自己都有点意外。因为痛苦是训练的一部分——和体能训练、战术推演一样，是你不会绕过的必修课。',s:{chuzh:3,zero:2}},
+    {t:'你也犹豫了。但你犹豫的是——"能不能帮别人抹？"',s:{caesar:1,chuzh:1,lumf:1,zero:2}},
+    {t:'你笑了一下，很轻的那种——"我试过了。我已经用了一百年的时间，都没能忘掉。"然后你醒了过来。',s:{xiami:3,nono:2}}
+  ]},{q:'在你的葬礼上，你希望人们怎么评价你？',opts:[
+    {t:'"他是个好人。"就这四个字。你不需要任何华丽的悼词，你只希望那些被你偷偷帮过的人，能在很久很久以后的某一天，突然想起来然后愣一下。',s:{lumf:3,erii:2}},
+    {t:'"他信守了每一个承诺。"没有多余的修饰。但你知道，这句话的重量，世界上没有几个人扛得起来。',s:{chuzh:3,zero:2}},
+    {t:'"他来过，他燃烧过，他把自己的名字刻在了这个时代最显眼的位置。"你的葬礼上放的不会是哀乐——是你生前最爱的摇滚。',s:{caesar:3,nono:1}},
+    {t:'"这个人到底还瞒了我们多少事？！"——这是你希望人们在你的葬礼上发出的困惑。然后他们开始挖掘你留下的秘密，发现一个、又一个、又一个……',s:{fingal:2,xiami:2,nono:2}}
+  ]},{q:'电梯门打开的那一秒，你看见了一个人。你没办法解释，但你的血液好像在看见他的瞬间开始发烫。你的第一反应是？',opts:[
+    {t:'手不自觉地按在了胸口——那里有个看不见的东西在跳，跳得你有点发慌。你不知道那是恐惧还是别的什么。但你知道：推开这道门，就没有回头路了。',s:{lumf:3,erii:2}},
+    {t:'你的瞳孔在电梯镜面里变成了金色。你控制住了——深呼吸，一秒种，瞳孔恢复正常。然后你直视那个人的眼睛，等待他的下一步动作。',s:{chuzh:3,zero:2}},
+    {t:'嘴角上扬。真好，又一个能打的。',s:{caesar:2,xiami:2,chuzh:1}},
+    {t:'你闻到了一股不属于人间的味道——很淡，但你知道那是什么：龙血。与此同时你意识到，那个人也在看着你，眼睛里闪过一丝你读不懂的光。',s:{xiami:3,nono:2,zero:1}}
+  ]},{q:'毕业那天，你把学士帽扔向天空。在帽子旋转着飞出去的0.3秒之间，你心里想的是——',opts:[
+    {t:'终于结束了。虽然嘴上和所有人一起喊着"青春不散场"，但你知道——你又是一个人走在回家的路上了。和四年前一模一样。',s:{lumf:3,erii:2}},
+    {t:'明天的排期表已经在你脑子里自动生成好了。不是你不懂仪式感——只是你的仪式感是完成目标，而不是告别。',s:{chuzh:3,zero:2}},
+    {t:'你环顾四周，把所有人脸上的表情记在心里——这些是你的人。你有义务让他们每一个人都过得很好。这不是结束，是你的时代正式拉开序幕。',s:{caesar:3,nono:1}},
+    {t:'帽子落下来的时候你没有接。你转身走了——像平时翘课一样自然。你在人群的欢呼声中消失，就像你当初在人群中出现的那个下午。没有人记得你是什么时候来的，也没有人注意到你什么时候走的。',s:{xiami:2,fingal:2,nono:2}}
+  ]},{q:'如果有人给了你一个可以窥探任何人内心真实想法的机会，但只能维持十秒钟。你会用来——',opts:[
+    {t:'不敢用。真的不敢。有些真相你不知道自己能不能承受——万一在那十秒里，你看到了最害怕看到的那个答案呢？你把机会退了回去。',s:{lumf:3,erii:2}},
+    {t:'用在一个你永远不会追问的人身上。不是为了怀疑——是为了确认。你只想在那十秒里看见一个人的心，确认一件事：她好不好。',s:{chuzh:2,zero:2,lumf:1}},
+    {t:'用在对手身上——趁他还没反应过来。十秒钟足够了，够你把他所有的底牌摸得一清二楚。然后你会微笑着把机会还回去，假装什么都没发生。',s:{caesar:1,nono:2,fingal:2}},
+    {t:'用在自己身上。你想看看——在没有任何修饰和伪装的黑暗里，你到底是个什么东西。',s:{xiami:3,zero:2,nono:1}}
+  ]},{q:'你生命里出现过的最难忘的一句告别是什么？',opts:[
+    {t:'"明天见。"——说的人第二天没有来。从此你再也没有对任何人说过这三个字。',s:{lumf:3,chuzh:1,erii:1}},
+    {t:'什么都没说。那个人只是看了你一眼，然后转身走进了雨里。你站在那里看着他背影越来越小，心里忽然想起了一句很老的话：不会回头的人，也一定不会忘记。',s:{chuzh:3,zero:2}},
+    {t:'"你很像我。"——你到现在也不知道这句话是夸奖、是诅咒，还是那个人能给你的唯一的提示。',s:{xiami:3,caesar:1,zero:1}},
+    {t:'"学生会聚餐别忘了啊，你请。"——你笑着骂了回去。但两个小时后你一个人站在阳台上，忽然发现那个人的电话号码后面，多了一行红色的字：用户已注销。',s:{fingal:3,lumf:2}}
+  ]},{q:'夜深了，你终于可以卸下所有的角色和面具。这时候你最常出现的念头是？',opts:[
+    {t:'"我今天有没有做错什么？"每天例行的自我拷问——有时候你能答上来，有时候不能。',s:{lumf:3,erii:2}},
+    {t:'"明天的计划：时间05:30,内容—,执行标准—,应急预案—。"你脑子里自动滚动着这些字，仿佛这样就能把世界变得可控一点。',s:{chuzh:3,zero:2}},
+    {t:'"我真的配得上我现在拥有的一切吗？"——这个念头只在你摘下面具的时候出现，然后被你迅速摁灭。但它每次都回来。',s:{caesar:2,nono:2,xiami:1}},
+    {t:'"我是谁？"——不是哲学的修辞，是你真的有时候分不清。今天演的这个人到底是不是你，还是说，你已经演了太多年，把"演"活成了真。',s:{xiami:3,nono:2,fingal:1}}
+  ]},{q:'如果你可以跟过去的自己说一句话——只有一句，不能多——你会选哪句？',opts:[
+    {t:'"那个女孩后来很好。但你一定要在4月17号下午三点，去图书馆四楼南侧靠窗倒数第二个座位。不要问为什么。去吧。"',s:{lumf:3,erii:2}},
+    {t:'"202X年5月，格陵兰。"你没有加上任何情绪。你知道过去的自己会明白——有些准备，从一句话开始就够了。',s:{chuzh:3,zero:2}},
+    {t:'"你做的每一个选择都是对的。不要怀疑，不要回头。你终将成为那个人。"——你顿了顿，又加了一句："她会嫁给你的。"',s:{caesar:3,nono:1}},
+    {t:'你张了张嘴，但最终什么也没说出口。因为你想说的话——"不要走那条路"——和"你一定要走那条路"，在你脑子里打成了一个死结。',s:{xiami:3,fingal:2,zero:1}}
+  ]},{q:'最后一道门。推开它之前，你听见门后传来了隐约的声音。那声音像风声，又像龙啸，又像有人在叫着你的名字——用你已经遗忘了很多年的、最初的那个名字。你推开门的方式是？',opts:[
+    {t:'用尽全身力气，猛地推开。你害怕自己一旦犹豫就会转身逃跑——所以你用最笨的办法逼自己前进。门后的光瞬间涌出来，烫得你睁不开眼。',s:{lumf:3,erii:2}},
+    {t:'右手握住了从不离身的刀柄，左手按在门上。你深吸一口气，以最冷静的姿态推开了门——就像你打开过这扇门一千次一样。',s:{chuzh:3,zero:2}},
+    {t:'不需要推。你站在门前，门自己开了。因为你的黄金瞳在黑暗中燃烧，门的那一边，有什么东西认出了你。',s:{caesar:2,xiami:2,nono:1}},
+    {t:'你把手放在门上，停了很久。然后笑了——是那种"终于等到这一天"的笑。你轻轻一推，门无声地滑开。门后是万丈深渊，而你，张开了翅膀。',s:{xiami:3,nono:2,zero:1}}
+  ]}
+];
+
+// ═══════════════════════════════════════════
+//  STATE & LOGIC
+// ═══════════════════════════════════════════
+let cur=0, scores={}, answers=new Array(20).fill(-1), order=[], Q_shuffled=[];
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function reset(){scores={};for(let k in characters)scores[k]=0;answers=new Array(20).fill(-1);cur=0;order=[];Q_shuffled=[]}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active')}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+
+function startQuiz(){
+  reset();
+  order=shuffle([...Array(20).keys()]);
+  Q_shuffled=order.map(i=>Q[i]);
+  show('quiz');renderQ();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderQ(){
+  const q=Q_shuffled[cur];
+  document.getElementById('q-num').textContent=`QUESTION ${String(cur+1).padStart(2,'0')}`;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('progress-label').textContent=`第 ${cur+1} / 20 问`;
+  const pct=Math.round(((cur+1)/20)*100);
+  document.getElementById('progress-percent').textContent=pct+'%';
+  document.getElementById('progress-fill').style.width=pct+'%';
+  const c=document.getElementById('options');c.innerHTML='';
+  const L=['A','B','C','D'];
+  q.opts.forEach((o,i)=>{const d=document.createElement('div');d.className='option'+(answers[cur]===i?' selected':'');d.innerHTML=`<span class="option-letter">${L[i]}</span><span class="option-text">${o.t}</span>`;d.onclick=()=>select(i);c.appendChild(d)});
+  document.getElementById('btn-prev').style.display=cur>0?'':'none';
+  document.getElementById('btn-next').textContent=cur<19?'下一问 →':'揭晓答案 ✦'
+}
+function select(i){answers[cur]=i;document.querySelectorAll('.option').forEach((e,idx)=>e.classList.toggle('selected',idx===i))}
+function goNext(){
+  if(answers[cur]===-1){toast('请先选择一个和你心跳同步的答案');return}
+  const chosen=Q_shuffled[cur].opts[answers[cur]].s;
+  for(let k in chosen)scores[k]+=chosen[k];
+  // Random jitter — ±1 to 3-5 random chars each answer, breaking predictability
+  const keys=Object.keys(characters).filter(k=>k!=='nidhogg');
+  const chaos=shuffle(keys).slice(0,3+Math.floor(Math.random()*3));
+  chaos.forEach(k=>{scores[k]+=(Math.random()<0.5?-1:1)});
+  if(cur<19){cur++;renderQ();window.scrollTo({top:0,behavior:'smooth'})}else showResult()
+}
+function goPrev(){
+  if(cur===0)return;const pa=answers[cur-1];
+  if(pa!==-1){const ps=Q_shuffled[cur-1].opts[pa].s;for(let k in ps)scores[k]-=ps[k]}
+  cur--;renderQ();window.scrollTo({top:0,behavior:'smooth'})
+}
+
+// ═══════════════════════════════════════════
+//  GALLERY ENGINE
+// ═══════════════════════════════════════════
+function buildGalleryHTML(ch){
+  const imgs=ch.gallery||[];
+  if(imgs.length===0){
+    return `<div class="gallery-wrap"><div class="gallery-slide"><div class="gallery-fallback" style="display:block">${ch.fallback}</div></div></div>`;
+  }
+  const slides=imgs.map((url,i)=>`
+    <div class="gallery-slide">
+      <img class="gallery-img" src="${url}" alt="${ch.name}" loading="lazy" onerror="this.style.display='none';this.parentElement.querySelector('.gallery-fallback').style.display='block'">
+      <div class="gallery-fallback">${ch.fallback}</div>
+    </div>
+  `).join('');
+  const dots=imgs.map((_,i)=>`<span class="gallery-dot${i===0?' active':''}" onclick="event.stopPropagation();goSlide('${ch.id}',${i})"></span>`).join('');
+  return `
+    <div class="gallery-wrap" id="gallery-${ch.id}">
+      <div class="gallery-track" id="track-${ch.id}">${slides}</div>
+      ${imgs.length>1?`<button class="gallery-arrow prev" onclick="event.stopPropagation();prevSlide('${ch.id}')">‹</button><button class="gallery-arrow next" onclick="event.stopPropagation();nextSlide('${ch.id}')">›</button>`:''}
+      ${imgs.length>1?`<div class="gallery-dots" id="dots-${ch.id}">${dots}</div>`:''}
+      ${imgs.length>1?`<div class="gallery-counter" id="counter-${ch.id}">1 / ${imgs.length}</div>`:''}
+    </div>`;
+}
+
+// Store gallery state per character
+const galleryState={};
+function goSlide(cid,idx){
+  const ch=characters[cid];if(!ch||!ch.gallery)return;
+  const n=ch.gallery.length;const i=((idx%n)+n)%n;
+  galleryState[cid]=i;
+  const track=document.getElementById('track-'+cid);if(track)track.style.transform=`translateX(-${i*100}%)`;
+  const dots=document.getElementById('dots-'+cid);if(dots){dots.querySelectorAll('.gallery-dot').forEach((d,j)=>d.classList.toggle('active',j===i))}
+  const counter=document.getElementById('counter-'+cid);if(counter)counter.textContent=`${i+1} / ${n}`;
+}
+function nextSlide(cid){const ch=characters[cid];if(!ch||!ch.gallery)return;const cur2=galleryState[cid]||0;goSlide(cid,cur2+1)}
+function prevSlide(cid){const ch=characters[cid];if(!ch||!ch.gallery)return;const cur2=galleryState[cid]||0;goSlide(cid,cur2-1)}
+
+// Swipe support
+let touchX=0;
+document.addEventListener('touchstart',e=>{touchX=e.touches[0].clientX},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-touchX;
+  if(Math.abs(dx)<50)return;
+  const wrap=e.target.closest('.gallery-wrap');if(!wrap)return;
+  const cid=wrap.id.replace('gallery-','');
+  if(dx>0)prevSlide(cid);else nextSlide(cid);
+});
+
+// ═══════════════════════════════════════════
+//  RESULT — with Nidhogg easter egg
+// ═══════════════════════════════════════════
+function showResult(){
+  const allA=answers.every(a=>a===0);
+  let ch;
+  if(allA){ch=characters.nidhogg;ch.isNidhogg=true}
+  else{let top='lumf',ts=0;for(let k in scores){if(k==='nidhogg')continue;if(scores[k]>ts){ts=scores[k];top=k}}ch=characters[top];ch.isNidhogg=false}
+
+  // Clean up gallery state
+  for(let k in galleryState)delete galleryState[k];
+
+  const SL={strength:'力量',speed:'速度',spirit:'精神力',charm:'魅力'};
+  const html=`
+    <div class="card">
+      <div class="result-header">
+        <div class="result-badge">${ch.isNidhogg?'⚠ SYSTEM ANOMALY DETECTED':'YOUR DRAGON RAJA CHARACTER'}</div>
+        <div class="result-name">${ch.name}</div>
+      </div>
+      ${ch.isNidhogg?`
+        <div class="nidhogg-warn">
+          <div class="glitch-text">■■ 超出已知角色数据库 ■■</div>
+          <div class="sub-warn">你的每一次选择，都指向了同一个答案。<br>这个答案不在卡塞尔学院的档案里。<br>它在更古老的地方——在世界树的根部，在被所有编年史抹去的那一页上。<br><strong>你是第一次被这个测试识别出来的"不存在之人"。</strong></div>
+        </div>`:''}
+      <div class="character-card${ch.isNidhogg?' nidhogg-card':''}">
+        ${buildGalleryHTML(ch)}
+        <div class="character-card-body">
+          <div class="char-title">${ch.title}</div>
+          <div class="char-name">${ch.name}</div>
+          <div class="char-alias">${ch.alias}</div>
+          <div class="stat-grid">${Object.entries(ch.stats).map(([k,v])=>`<div class="stat-item"><div class="stat-label">${SL[k]||k}</div><div class="stat-value ${v.toLowerCase()}">${v}</div></div>`).join('')}</div>
+          <div class="tags">${ch.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+          <div class="desc">${ch.desc}</div>
+          <div class="quote-block">${ch.quote}</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="retake()">🔄 重新测试</button>
+      <button class="btn btn-secondary" onclick="shareResult('${ch.name}')">📤 分享这张角色卡</button>
+    </div>`;
+  document.getElementById('result-content').innerHTML=html;
+  show('result');window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function retake(){startQuiz()}
+function shareResult(name){
+  const text=`我在「龙族·角色性格测试」中测出了【${name}】！来卡塞尔学院，看看你的龙族血统藏在谁的影子里？🐉`;
+  if(navigator.share){navigator.share({title:'龙族角色性格测试',text})}else{navigator.clipboard.writeText(text).then(()=>toast('结果已复制！粘贴分享给朋友吧 ✨'))}
+}
+</script>
+</body>
+</html>

@@ -128,6 +128,32 @@
   .desc{font-size:13px;line-height:1.9;color:var(--text);margin-bottom:14px}
   .quote-block{font-size:13px;font-style:italic;color:var(--crimson);padding:12px 15px;background:rgba(183,28,52,.03);border-left:3px solid var(--crimson);border-radius:0 8px 8px 0;margin-bottom:14px;line-height:1.7}
 
+  /* Compatibility */
+  .compat-section{margin-bottom:16px}
+  .compat-title{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--gold);margin-bottom:10px;text-align:center}
+  .compat-item{display:flex;align-items:center;gap:10px;padding:8px 12px;margin-bottom:6px;background:var(--paper);border-radius:10px}
+  .compat-icon{font-size:20px;flex-shrink:0}
+  .compat-info{flex:1;min-width:0}
+  .compat-name{font-size:13px;font-weight:700;color:var(--night)}
+  .compat-label{font-size:11px;color:var(--text-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .compat-bar-wrap{height:4px;background:rgba(201,162,78,.15);border-radius:2px;margin-top:4px;overflow:hidden}
+  .compat-bar{height:100%;border-radius:2px;transition:width .6s ease}
+  .compat-bar.best{background:linear-gradient(90deg,var(--gold),var(--gold-bright))}
+  .compat-bar.good{background:linear-gradient(90deg,var(--sakura),var(--sakura-dark))}
+  .compat-bar.bad{background:linear-gradient(90deg,#aaa,#ccc)}
+  .compat-pct{font-size:12px;font-weight:700;color:var(--text-light);flex-shrink:0}
+
+  /* Match analysis */
+  .match-section{margin-bottom:16px;padding:14px 16px;background:var(--paper);border-radius:12px}
+  .match-title{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--gold);margin-bottom:10px;text-align:center}
+  .match-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:13px}
+  .match-char{font-weight:700;color:var(--night);min-width:50px}
+  .match-bar-wrap{flex:1;height:5px;background:rgba(201,162,78,.12);border-radius:3px;overflow:hidden}
+  .match-bar{height:100%;border-radius:3px;transition:width .8s ease}
+  .match-bar.m1{background:linear-gradient(90deg,var(--crimson),var(--sakura))}
+  .match-bar.m2{background:linear-gradient(90deg,var(--sakura-dark),#ccc)}
+  .match-num{font-size:12px;color:var(--text-light);min-width:32px;text-align:right}
+
   /* ── Nidhogg ── */
   .nidhogg-warn{text-align:center;margin-bottom:12px}
   .nidhogg-warn .glitch-text{font-size:22px;font-weight:900;color:#1a1a1a;letter-spacing:8px;margin-bottom:6px;animation:glitch .3s infinite}
@@ -202,6 +228,7 @@ const characters = {
       `${W}/6/63/3d2dv1xrbo9hmodqruw5aiq1p42hsdq.png`
     ],
     fallback:'🎮',
+    compat:{best:{with:'erii',label:'灵魂共振 — 你们都是孤独的小怪兽'},good:{with:'chuzh',label:'兄弟契约 — 他替你挡刀，你替他吐槽'},bad:{with:'caesar',label:'平行世界 — 金发贵公子和衰小孩，互相理解不能'}},
     desc:'雨夜的十字路口，一个衰小孩撑着一把破伞，伞骨断了三根，他却浑然不觉——因为他正对着手机那头的女孩说"我没事"。你就是那样的人。明明最害怕孤独，却总在假装一个人也可以。你不知道自己有多强，正如你不知道那个一直在保护你的小魔鬼，究竟付出了什么代价。',
     quote:'「每个人心里都有一个死小孩，在黑暗里独自哭泣。只是有的人听见了，有的人假装没听见。」'
   },
@@ -214,6 +241,7 @@ const characters = {
       `${W}/a/ab/nay5m10p5kpdp8xnghwbi45x2q36amp.png`
     ],
     fallback:'⚔️',
+    compat:{best:{with:'xiami',label:'宿命之恋 — 君焰与大地，火与山的碰撞'},good:{with:'lumf',label:'亦师亦友 — 你教他拔刀，他教你活着'},bad:{with:'fingal',label:'次元壁 — 秩序狂魔和摸鱼之王，相互敬而远之'}},
     desc:'暴雨倾盆的夜晚，一个人站在高架桥下，雨水顺着刀锋滑落。他不说一句话，但所有人都知道——只要他在，就没有人能越界。你的沉默不是冷漠，而是把所有的温度都藏在了行动里。你相信这世界上有对错，有必须做的事，有即便是死也不能退让的底线。',
     quote:'「我不会让任何人死在我面前。这不是承诺，这是我的道。」'
   },
@@ -225,6 +253,7 @@ const characters = {
       'https://p1.ssl.qhmsg.com/dr/270_500_/t010a7d811926643197.jpg',
     ],
     fallback:'👑',
+    compat:{best:{with:'nono',label:'命定之人 — 红发巫女与金发贵公子，天生一对'},good:{with:'chuzh',label:'宿命对手 — 狮子对狮子，彼此唯一的认可'},bad:{with:'erii',label:'无法共鸣 — 他的世界太吵闹，她的世界太安静'}},
     desc:'阳光穿过彩绘玻璃窗落在他的金发上，他转过身来，嘴角带着笃定的笑意。你生来就不属于平庸。你相信荣耀不是别人给的，是自己赢来的。你从不掩饰自己的光芒，也从不屑于用卑劣的手段取胜。像一个中世纪的骑士，你策马冲进战场，铠甲在阳光下闪闪发光。',
     quote:'「我生来就是焦点。这不是傲慢，这是事实。」'
   },
@@ -237,6 +266,7 @@ const characters = {
       `${W}/c/cb/lj0g2j0078z2e3f7wtun419y2yt9q4q.png`
     ],
     fallback:'🌹',
+    compat:{best:{with:'caesar',label:'命定之人 — 金发贵公子与红发巫女，只有她能驯服他'},good:{with:'lumf',label:'奇妙羁绊 — 她是他的光，他是她放心不下的小弟'},bad:{with:'zero',label:'冰与火 — 一个冷到骨子里，一个烈到骨子里'}},
     desc:'她穿着红色的裙子穿过人群，所有人都回头看她，但她谁也没看。你就是那样的人——你的心思像一本用密码写成的书，没人能轻易读懂。你把温柔藏得很深，深到连自己有时都找不到。但当你真正在意一个人，你会跨过世界的边缘去救他。',
     quote:'「我叫陈墨瞳。墨水的墨，瞳孔的瞳。记住了——因为我不会说第二遍。」'
   },
@@ -248,6 +278,7 @@ const characters = {
       'https://media.9game.cn/gamebase/ieu-gdc-pre-process/images/20240912/14/14/39acca1973247fd6e72c2d918a005903.jpg',
     ],
     fallback:'🐍',
+    compat:{best:{with:'chuzh',label:'宿命之恋 — 大地与山之王，只为他一人卸下伪装'},good:{with:'nono',label:'同类相惜 — 两个戴着面具的人，能看穿彼此的伪装'},bad:{with:'caesar',label:'天敌 — 龙王与屠龙者，立场决定一切'}},
     desc:'她笑得像夏天里第一口冰西瓜，甜得让人忘记所有的防备。但如果你仔细看她的眼睛，会看见里面倒映着千万年的星河——那是一个古老得无法计算年岁的灵魂，借着一个少女的躯壳，偷偷尝一口人间的温暖。你也一样，把自己真正的重量藏在了轻快的笑容背后。',
     quote:'「我叫夏弥。夏天的夏，弥天的弥——弥天大谎的弥。」'
   },
@@ -260,6 +291,7 @@ const characters = {
       `${W}/7/78/ou7c9fwk1944ngofsun5zgro1mmks0p.png`
     ],
     fallback:'🦋',
+    compat:{best:{with:'lumf',label:'灵魂共振 — Sakura遇到Sakura，世界上另一个自己'},good:{with:'zero',label:'我们都是小怪兽 — 同样被世界误解，同样渴望平凡'},bad:{with:'caesar',label:'无法共鸣 — 他的世界太吵闹，她的世界太安静'}},
     desc:'她用记号笔在速写本上写字，一笔一划，认真得像第一次握笔的孩子。她想去看外面的世界——去看海、去看烟花、去看所有她从未拥有过的"普通的幸福"。你和她一样，心里藏着最柔软的角落，不管经历过什么，依然选择用善意去触碰这个世界。',
     quote:'「Sakura......Sakura......Sakura......」——那是她唯一会说的名字，也是她留给世界的最后一句诗。'
   },
@@ -272,6 +304,7 @@ const characters = {
       `${W}/8/85/tjz6x0bz1bx9kbrksgusg2yei4g6ibz.png`
     ],
     fallback:'❄️',
+    compat:{best:{with:'lumf',label:'永恒契约 — 不彼此抛弃，不彼此出卖，直到死亡尽头'},good:{with:'erii',label:'我们都是小怪兽 — 同样被世界误解，同样渴望平凡'},bad:{with:'nono',label:'冰与火 — 一个冷到骨子里，一个烈到骨子里'}},
     desc:'莫斯科的雪落在她的睫毛上，她一动不动地站在零下三十度的风中。不解释、不抱怨、不示弱。你不是冷漠，你只是太清楚承诺的重量。你从不多说，但当你答应了一件事，即便是世界的尽头你也会走到。那些真正懂你的人，不需要你的解释，就已经知道了。',
     quote:'「不彼此抛弃，不彼此出卖。直到死亡的尽头——这是我唯一的约定。」'
   },
@@ -284,6 +317,7 @@ const characters = {
       `${W}/7/76/3pjdotzl49j4voug11997ecyjvo0i82.png`
     ],
     fallback:'🍗',
+    compat:{best:{with:'lumf',label:'难兄难弟 — 一起打游戏一起挂科，一起在深渊边缘吃夜宵'},good:{with:'zero',label:'名师高徒 — 他教会她笑，她教会他认真'},bad:{with:'chuzh',label:'次元壁 — 秩序狂魔和摸鱼之王，相互敬而远之'}},
     desc:'他叼着鸡腿，穿着人字拖，永远拖欠着毕业论文字数。可如果你调出封存已久的档案，会看见格陵兰冰盖上一个少年孤身站在沉没的黑影前——他曾经是卡塞尔最耀眼的天才，只是后来选择把自己活成了一个笑话。你就是那种人：用最不正经的方式，守护着最正经的东西。',
     quote:'「不要小看任何一个留级生。他只是不想毕业而已——这所学院需要他。」'
   },
@@ -437,7 +471,7 @@ function renderQ(){
   document.getElementById('btn-prev').style.display=cur>0?'':'none';
   document.getElementById('btn-next').textContent=cur<19?'下一问 →':'揭晓答案 ✦'
 }
-function select(i){answers[cur]=i;document.querySelectorAll('.option').forEach((e,idx)=>e.classList.toggle('selected',idx===i))}
+function select(i){answers[cur]=i;document.querySelectorAll('.option').forEach((e,idx)=>e.classList.toggle('selected',idx===i));clearTimeout(window._autoTmr);window._autoTmr=setTimeout(()=>goNext(),350)}
 function goNext(){
   if(answers[cur]===-1){toast('请先选择一个和你心跳同步的答案');return}
   const chosen=Q_shuffled[cur].opts[answers[cur]].s;
@@ -503,6 +537,138 @@ document.addEventListener('touchend',e=>{
 });
 
 // ═══════════════════════════════════════════
+//  COMPATIBILITY
+// ═══════════════════════════════════════════
+function buildCompatHTML(ch){
+  if(!ch.compat)return'';
+  const topScore=scores[ch.id]||1;
+  const tiers=[
+    {key:'best',icon:'💫',cls:'best'},
+    {key:'good',icon:'🤝',cls:'good'},
+    {key:'bad',icon:'⚡',cls:'bad'}
+  ];
+  let html='<div class="compat-section"><div class="compat-title">✦ 角色相性匹配 ✦</div>';
+  tiers.forEach(t=>{
+    const c=ch.compat[t.key];
+    const target=characters[c.with]; if(!target)return;
+    const raw=scores[c.with]||0;
+    const pct=Math.min(99,Math.max(10,Math.round((raw/Math.max(topScore,1))*100 + (Math.random()*10-5))));
+    html+=`
+      <div class="compat-item">
+        <div class="compat-icon">${t.icon}</div>
+        <div class="compat-info">
+          <div class="compat-name">${target.name}</div>
+          <div class="compat-label">${c.label}</div>
+          <div class="compat-bar-wrap"><div class="compat-bar ${t.cls}" style="width:${pct}%"></div></div>
+        </div>
+        <div class="compat-pct">${pct}%</div>
+      </div>`;
+  });
+  html+='</div>';
+  return html;
+}
+
+function buildMatchHTML(ch){
+  if(ch.isNidhogg)return'';
+  // Count how many of the user's answers align with the result character
+  let matchCount=0; const runnerUp={};
+  for(let i=0;i<20;i++){
+    const a=answers[i]; if(a===-1)continue;
+    const sc=Q_shuffled[i].opts[a].s;
+    if(sc[ch.id]&&sc[ch.id]>=2){matchCount++;}
+    // Track runner-up contributions
+    for(let k in sc){if(k!==ch.id&&sc[k]>=2){runnerUp[k]=(runnerUp[k]||0)+1;}}
+  }
+  // Find top runner-up
+  let ruName='',ruCount=0;
+  for(let k in runnerUp){if(runnerUp[k]>ruCount){ruCount=runnerUp[k];ruName=characters[k]?characters[k].name:'';}}
+  const pct=Math.round((matchCount/20)*100);
+  const ruPct=Math.round((ruCount/20)*100);
+  return`
+    <div class="match-section">
+      <div class="match-title">✦ 选择共鸣分析 ✦</div>
+      <div class="match-row">
+        <span class="match-char">${ch.name}</span>
+        <span class="match-bar-wrap"><span class="match-bar m1" style="width:${pct}%"></span></span>
+        <span class="match-num">${matchCount}/20</span>
+      </div>
+      ${ruName?`
+      <div class="match-row">
+        <span class="match-char">${ruName}</span>
+        <span class="match-bar-wrap"><span class="match-bar m2" style="width:${ruPct}%"></span></span>
+        <span class="match-num">${ruCount}/20</span>
+      </div>`:''}
+      <div style="font-size:11px;color:var(--text-light);text-align:center;margin-top:6px">20题中有 <b style="color:var(--crimson)">${matchCount}题</b> 的选择指向了${ch.name}（${pct}%）</div>
+    </div>`;
+}
+
+function generateShareImage(ch,callback){
+  const canvas=document.createElement('canvas');
+  const W=600,H=900; canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  // Background
+  const bg=ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,'#14141e');bg.addColorStop(0.45,'#1e1e38');bg.addColorStop(1,'#14141e');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  // Gold border
+  ctx.strokeStyle='rgba(201,162,78,0.4)';ctx.lineWidth=2;ctx.strokeRect(15,15,W-30,H-30);
+  ctx.strokeStyle='rgba(242,167,186,0.25)';ctx.lineWidth=1;ctx.strokeRect(22,22,W-44,H-44);
+  // Top gradient line
+  const tl=ctx.createLinearGradient(W*0.1,0,W*0.9,0);
+  tl.addColorStop(0,'#f2a7ba');tl.addColorStop(0.3,'#c9a24e');tl.addColorStop(0.5,'#b71c34');tl.addColorStop(0.7,'#c9a24e');tl.addColorStop(1,'#f2a7ba');
+  ctx.fillStyle=tl;ctx.fillRect(W*0.1,40,W*0.8,3);
+  // Title
+  ctx.fillStyle='#c9a24e';ctx.font='bold 20px "Noto Serif SC","SimSun",serif';ctx.textAlign='center';
+  ctx.fillText('龙族 · 角色性格测试',W/2,85);
+  ctx.fillStyle='rgba(255,255,255,0.4)';ctx.font='12px "Noto Serif SC","SimSun",serif';
+  ctx.fillText('YOUR DRAGON RAJA CHARACTER',W/2,110);
+  // Character name
+  ctx.fillStyle='#fff';ctx.font='bold 52px "Noto Serif SC","SimSun",serif';
+  ctx.fillText(ch.name,W/2,180);
+  // Title
+  ctx.fillStyle='#c9a24e';ctx.font='bold 14px "Noto Serif SC","SimSun",serif';ctx.textAlign='center';
+  ctx.fillText(ch.title,W/2,210);
+  ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='12px "Noto Serif SC","SimSun",serif';
+  ctx.fillText(ch.alias,W/2,232);
+  // Stats
+  const statX=120,statY=270,statW=170,statH=60;
+  const stLabels={strength:'力量',speed:'速度',spirit:'精神力',charm:'魅力'};
+  const stKeys=['strength','speed','spirit','charm'];
+  stKeys.forEach((k,i)=>{
+    const col=i%2,row=Math.floor(i/2);
+    const x=statX+col*190,y=statY+row*85;
+    ctx.fillStyle='rgba(255,255,255,0.04)';ctx.strokeStyle='rgba(255,255,255,0.08)';
+    ctx.beginPath();ctx.roundRect(x,y,170,70,10);ctx.fill();ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,0.4)';ctx.font='11px "Noto Serif SC","SimSun",serif';ctx.textAlign='center';
+    ctx.fillText(stLabels[k],x+85,y+22);
+    ctx.fillStyle=ch.stats[k]==='S'?'#c9a24e':ch.stats[k]==='A'?'#b71c34':ch.stats[k]==='B'?'#c97a8e':'#888';
+    ctx.font='bold 26px "Noto Serif SC","SimSun",serif';
+    ctx.fillText(ch.stats[k],x+85,y+55);
+  });
+  // Quote
+  ctx.fillStyle='rgba(183,28,52,0.15)';ctx.fillRect(50,480,W-100,65);
+  ctx.fillStyle='#b71c34';ctx.font='italic 13px "Noto Serif SC","SimSun",serif';ctx.textAlign='center';
+  const q=ch.quote.length>65?ch.quote.substring(0,65)+'...」':ch.quote;
+  ctx.fillText(q,W/2,515);
+  // Description
+  ctx.fillStyle='rgba(255,255,255,0.7)';ctx.font='13px "Noto Serif SC","SimSun",serif';
+  const desc=ch.desc.replace(/<[^>]+>/g,'');
+  wrapText(ctx,desc,W/2,560,W-100,22,8);
+  // Footer
+  ctx.fillStyle='rgba(255,255,255,0.25)';ctx.font='11px "Noto Serif SC","SimSun",serif';ctx.textAlign='center';
+  ctx.fillText('扫码测测你的龙族血统 → 888cll.github.io/dragon-raja-quiz',W/2,H-50);
+  ctx.fillText('「卡塞尔之门」角色性格测试',W/2,H-30);
+  callback(canvas.toDataURL('image/png'));
+}
+
+function wrapText(ctx,text,x,y,maxW,lineH,maxLines){
+  const chars=text.split('');let line='',lines=[];
+  for(let c of chars){const test=line+c;if(ctx.measureText(test).width>maxW&&line){lines.push(line);line=c;if(lines.length>=maxLines)break}else line=test}
+  if(line&&lines.length<maxLines)lines.push(line);
+  lines.forEach((l,i)=>{ctx.fillText(l,x,y+i*lineH)});
+}
+
+// ═══════════════════════════════════════════
 //  RESULT — with Nidhogg easter egg
 // ═══════════════════════════════════════════
 function showResult(){
@@ -536,15 +702,40 @@ function showResult(){
           <div class="tags">${ch.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
           <div class="desc">${ch.desc}</div>
           <div class="quote-block">${ch.quote}</div>
+          ${!ch.isNidhogg ? buildCompatHTML(ch) : ''}
+          ${!ch.isNidhogg ? buildMatchHTML(ch) : ''}
         </div>
       </div>
       <button class="btn btn-primary" onclick="retake()">🔄 重新测试</button>
-      <button class="btn btn-secondary" onclick="shareResult('${ch.name}')">📤 分享这张角色卡</button>
+      <button class="btn btn-secondary" onclick="genShareCard('${ch.id}')">🖼️ 生成分享图</button>
+      <button class="btn btn-secondary" style="margin-top:0" onclick="shareResult('${ch.name}')">📤 分享链接</button>
+      <canvas id="shareCanvas" style="display:none"></canvas>
+      <div id="shareImgWrap" style="text-align:center;margin-top:12px;display:none">
+        <img id="shareImg" style="width:100%;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.3)">
+        <button class="btn btn-primary" style="margin-top:8px;font-size:13px" onclick="saveShareImg()">💾 长按或点击保存图片</button>
+      </div>
     </div>`;
   document.getElementById('result-content').innerHTML=html;
   show('result');window.scrollTo({top:0,behavior:'smooth'});
 }
 
+function genShareCard(cid){
+  const ch=characters[cid]; if(!ch)return;
+  const wrap=document.getElementById('shareImgWrap');
+  const btn=document.querySelector('button[onclick*="genShareCard"]');
+  if(btn){btn.textContent='生成中...';btn.disabled=true}
+  generateShareImage(ch,dataUrl=>{
+    const img=document.getElementById('shareImg');img.src=dataUrl;
+    wrap.style.display='block';wrap.scrollIntoView({behavior:'smooth'});
+    if(btn){btn.textContent='🖼️ 重新生成';btn.disabled=false}
+  });
+}
+function saveShareImg(){
+  const img=document.getElementById('shareImg');
+  if(!img||!img.src)return;
+  const a=document.createElement('a');a.href=img.src;a.download='龙族角色卡.png';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
 function retake(){startQuiz()}
 function shareResult(name){
   const text=`我在「龙族·角色性格测试」中测出了【${name}】！来卡塞尔学院，看看你的龙族血统藏在谁的影子里？🐉`;
